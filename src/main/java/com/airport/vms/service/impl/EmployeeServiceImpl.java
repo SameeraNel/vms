@@ -52,6 +52,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    public org.springframework.data.domain.Page<EmployeeDto.EmployeeResponse> listEmployees(org.springframework.data.domain.Pageable pageable) {
+        return employeeRepository.findAll(pageable).map(EmployeeMapper::toResponse);
+    }
+
+    @Override
     public void syncEmployeesFromDirectory(java.util.List<EmployeeDto.EmployeeRequest> batch) {
         // This is a simplified implementation. A real-world scenario would involve
         // more complex logic to handle updates, deactivations, etc.

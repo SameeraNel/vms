@@ -10,5 +10,7 @@ public interface EmployeeService {
 
     EmployeeDto.EmployeeResponse getEmployee(Long id);
 
+    org.springframework.data.domain.Page<EmployeeDto.EmployeeResponse> listEmployees(org.springframework.data.domain.Pageable pageable);
+
     void syncEmployeesFromDirectory(java.util.List<EmployeeDto.EmployeeRequest> batch);
 }
