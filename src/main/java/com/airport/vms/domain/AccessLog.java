@@ -33,7 +33,7 @@ public class AccessLog {
     private LocalDateTime createdAt;
 
     public enum EventType {
-        PRE_REGISTER, CHECK_IN, CHECK_OUT, BADGE_SCAN, ACCESS_DENIED, SYNC
+        PRE_REGISTER, CHECK_IN, CHECK_OUT, BADGE_SCAN, ACCESS_DENIED, SYNC, CANCEL
     }
 
     public AccessLog() {
