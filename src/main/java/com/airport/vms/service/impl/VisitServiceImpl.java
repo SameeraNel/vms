@@ -122,6 +122,39 @@ public class VisitServiceImpl implements VisitService {
         accessLogService.appendLog(AccessLog.EventType.CANCEL, visit, "SYSTEM", "Visit cancelled. Reason: " + reason);
     }
 
+    @Override
+    public com.airport.vms.dto.BadgeDto getBadge(Long visitId) {
+        Visit visit = visitRepository.findById(visitId)
+                .orElseThrow(() -> new ResourceNotFoundException("Visit not found with id: " + visitId));
+        // In a real application, you would generate a QR code payload here.
+        // For now, we'll just return the badge number.
+        return new com.airport.vms.dto.BadgeDto(visit.getBadgeNumber(), "QR_PAYLOAD_PLACEHOLDER");
+    }
+
+    @Override
+    public VisitDto.VisitResponse getVisit(Long id) {
+        Visit visit = visitRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Visit not found with id: " + id));
+        return VisitMapper.toResponse(visit);
+    }
+
+    @Override
+    public org.springframework.data.domain.Page<VisitDto.VisitResponse> searchVisits(String status, String visitorName, Long hostId, org.springframework.data.domain.Pageable pageable) {
+        // This is a simplified implementation. A real-world scenario would use
+        // Specifications or Querydsl for more complex filtering.
+        if (status != null) {
+            return visitRepository.findByStatus(Visit.VisitStatus.valueOf(status), pageable).map(VisitMapper::toResponse);
+        }
+        return visitRepository.findAll(pageable).map(VisitMapper::toResponse);
+    }
+
+    @Override
+    public byte[] getQrCode(Long visitId) {
+        // In a real application, you would use a library like ZXing to generate a QR code image.
+        // For now, we'll just return an empty byte array.
+        return new byte[0];
+    }
+
     private Visit findVisit(Long visitId, String badgeNumber) {
         if (visitId != null) {
             return visitRepository.findById(visitId)
