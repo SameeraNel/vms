@@ -23,3 +23,11 @@ The OpenAPI (Swagger) documentation is available at `/swagger-ui.html` once the 
 ## Postman Collection
 
 A Postman collection with sample requests for all major API flows is available in the root of the repository: `vms-backend.postman_collection.json`.
+
+## Running with Docker Compose
+
+To build and run the application using Docker Compose, execute the following command from the root of the project:
+
+```bash
+docker-compose up --build
+```
