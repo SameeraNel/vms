@@ -18,6 +18,8 @@ public class MyUserDetailsService implements UserDetailsService {
             return new User("admin", "password", Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN")));
         } else if ("kiosk".equals(username)) {
             return new User("kiosk", "password", Collections.singletonList(new SimpleGrantedAuthority("ROLE_KIOSK")));
+        } else if ("guard".equals(username)) {
+            return new User("guard", "password", Collections.singletonList(new SimpleGrantedAuthority("ROLE_GUARD")));
         } else {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }

@@ -43,7 +43,6 @@ public class VisitServiceImpl implements VisitService {
     }
 
     @Override
-    @Transactional
     public VisitDto.VisitResponse preRegisterVisit(VisitDto.VisitCreateRequest visitCreateRequest) {
         Visitor visitor;
         if (visitCreateRequest.visitorId() != null) {
@@ -143,12 +142,8 @@ public class VisitServiceImpl implements VisitService {
 
     @Override
     public org.springframework.data.domain.Page<VisitDto.VisitResponse> searchVisits(String status, String visitorName, Long hostId, org.springframework.data.domain.Pageable pageable) {
-        // This is a simplified implementation. A real-world scenario would use
-        // Specifications or Querydsl for more complex filtering.
-        if (status != null) {
-            return visitRepository.findByStatus(Visit.VisitStatus.valueOf(status), pageable).map(VisitMapper::toResponse);
-        }
-        return visitRepository.findAll(pageable).map(VisitMapper::toResponse);
+        Visit.VisitStatus visitStatus = status != null ? Visit.VisitStatus.valueOf(status) : null;
+        return visitRepository.search(visitStatus, visitorName, hostId, pageable).map(VisitMapper::toResponse);
     }
 
     @Override
