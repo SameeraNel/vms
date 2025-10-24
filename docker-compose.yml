@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  vms-backend:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=postgres
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/vms
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=password
+      - JWT_SECRET=a-very-long-and-secure-secret-key-that-is-at-least-256-bits-long
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:14.1-alpine
+    environment:
+      - POSTGRES_DB=vms
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
