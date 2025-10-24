@@ -15,3 +15,11 @@ To build and run the application, execute the following command from the root of
 ```bash
 mvn spring-boot:run
 ```
+
+## API Documentation
+
+The OpenAPI (Swagger) documentation is available at `/swagger-ui.html` once the application is running.
+
+## Postman Collection
+
+A Postman collection with sample requests for all major API flows is available in the root of the repository: `vms-backend.postman_collection.json`.

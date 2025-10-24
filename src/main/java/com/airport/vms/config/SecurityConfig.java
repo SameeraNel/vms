@@ -43,6 +43,7 @@ public class SecurityConfig {
         http.csrf().disable()
                 .authorizeHttpRequests()
                 .requestMatchers("/api/v1/authenticate").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/visits/checkin", "/api/v1/visits/*/checkin", "/api/v1/visits/checkout", "/api/v1/visits/*/checkout").hasAnyRole("KIOSK", "GUARD", "ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/v1/sync/**").hasRole("KIOSK")
                 .requestMatchers("/api/v1/logs/**").hasRole("AUDITOR")
                 .anyRequest().hasRole("ADMIN")

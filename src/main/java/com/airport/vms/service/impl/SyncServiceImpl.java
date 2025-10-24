@@ -10,6 +10,7 @@ import com.airport.vms.mapper.VisitMapper;
 import com.airport.vms.repository.AccessZoneRepository;
 import com.airport.vms.repository.EmployeeRepository;
 import com.airport.vms.repository.VisitRepository;
+import com.airport.vms.service.IdempotencyService;
 import com.airport.vms.service.SyncService;
 import com.airport.vms.service.VisitService;
 import org.springframework.stereotype.Service;
@@ -26,20 +27,25 @@ public class SyncServiceImpl implements SyncService {
     private final VisitRepository visitRepository;
     private final EmployeeRepository employeeRepository;
     private final AccessZoneRepository accessZoneRepository;
+    private final IdempotencyService idempotencyService;
 
-    public SyncServiceImpl(VisitService visitService, VisitRepository visitRepository, EmployeeRepository employeeRepository, AccessZoneRepository accessZoneRepository) {
+    public SyncServiceImpl(VisitService visitService, VisitRepository visitRepository, EmployeeRepository employeeRepository, AccessZoneRepository accessZoneRepository, IdempotencyService idempotencyService) {
         this.visitService = visitService;
         this.visitRepository = visitRepository;
         this.employeeRepository = employeeRepository;
         this.accessZoneRepository = accessZoneRepository;
+        this.idempotencyService = idempotencyService;
     }
 
     @Override
     public List<SyncDto.VisitSyncResponse> pushVisitsBatch(List<SyncDto.VisitSyncRequest> batch, String kioskId) {
         List<SyncDto.VisitSyncResponse> responses = new ArrayList<>();
         for (SyncDto.VisitSyncRequest request : batch) {
+            if (idempotencyService.isDuplicate(request.idempotencyKey())) {
+                responses.add(new SyncDto.VisitSyncResponse(request.localId(), null, "DUPLICATE", null));
+                continue;
+            }
             try {
-                // A real implementation would check the idempotency key to prevent duplicates
                 visitService.preRegisterVisit(request.visit());
                 responses.add(new SyncDto.VisitSyncResponse(request.localId(), null, "SUCCESS", null));
             } catch (Exception e) {
@@ -61,5 +67,10 @@ public class SyncServiceImpl implements SyncService {
                 accessZones.stream().map(AccessZoneMapper::toResponse).collect(Collectors.toList()),
                 LocalDateTime.now()
         );
+    }
+
+    @Override
+    public SyncDto.VisitSyncResponse processVisitSyncRequest(SyncDto.VisitSyncRequest request, String kioskId) {
+        return null;
     }
 }

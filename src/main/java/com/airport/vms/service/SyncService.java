@@ -10,4 +10,6 @@ public interface SyncService {
     List<SyncDto.VisitSyncResponse> pushVisitsBatch(List<SyncDto.VisitSyncRequest> batch, String kioskId);
 
     SyncDto.ChangesResponse getChangesSince(LocalDateTime timestamp);
+
+    SyncDto.VisitSyncResponse processVisitSyncRequest(SyncDto.VisitSyncRequest request, String kioskId);
 }

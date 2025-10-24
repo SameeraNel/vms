@@ -22,4 +22,10 @@ public interface VisitRepository extends JpaRepository<Visit, Long> {
     Page<Visit> findActiveVisits(Pageable pageable);
 
     List<Visit> findAllByUpdatedAtAfter(java.time.LocalDateTime timestamp);
+
+    @Query("SELECT v FROM Visit v WHERE " +
+            "(:status IS NULL OR v.status = :status) AND " +
+            "(:visitorName IS NULL OR lower(v.visitor.firstName) LIKE lower(concat('%', :visitorName, '%')) OR lower(v.visitor.lastName) LIKE lower(concat('%', :visitorName, '%'))) AND " +
+            "(:hostId IS NULL OR v.host.id = :hostId)")
+    Page<Visit> search(Visit.VisitStatus status, String visitorName, Long hostId, Pageable pageable);
 }
