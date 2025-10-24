@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface AccessZoneRepository extends JpaRepository<AccessZone, Long> {
 
     Optional<AccessZone> findByCode(String code);
+
+    java.util.List<AccessZone> findAllByUpdatedAtAfter(java.time.LocalDateTime timestamp);
 }

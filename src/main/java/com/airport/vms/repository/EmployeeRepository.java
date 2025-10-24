@@ -12,4 +12,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     Optional<Employee> findByBadgeId(String badgeId);
 
     Page<Employee> findByDepartment(String department, Pageable pageable);
+
+    java.util.List<Employee> findAllByUpdatedAtAfter(java.time.LocalDateTime timestamp);
 }

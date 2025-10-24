@@ -20,4 +20,6 @@ public interface VisitRepository extends JpaRepository<Visit, Long> {
 
     @Query("SELECT v FROM Visit v WHERE v.active = true")
     Page<Visit> findActiveVisits(Pageable pageable);
+
+    List<Visit> findAllByUpdatedAtAfter(java.time.LocalDateTime timestamp);
 }

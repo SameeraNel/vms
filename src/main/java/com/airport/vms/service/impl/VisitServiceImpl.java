@@ -11,9 +11,14 @@ import com.airport.vms.repository.VisitRepository;
 import com.airport.vms.repository.VisitorRepository;
 import com.airport.vms.service.AccessLogService;
 import com.airport.vms.service.VisitService;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.UUID;
@@ -126,8 +131,6 @@ public class VisitServiceImpl implements VisitService {
     public com.airport.vms.dto.BadgeDto getBadge(Long visitId) {
         Visit visit = visitRepository.findById(visitId)
                 .orElseThrow(() -> new ResourceNotFoundException("Visit not found with id: " + visitId));
-        // In a real application, you would generate a QR code payload here.
-        // For now, we'll just return the badge number.
         return new com.airport.vms.dto.BadgeDto(visit.getBadgeNumber(), "QR_PAYLOAD_PLACEHOLDER");
     }
 
@@ -150,9 +153,17 @@ public class VisitServiceImpl implements VisitService {
 
     @Override
     public byte[] getQrCode(Long visitId) {
-        // In a real application, you would use a library like ZXing to generate a QR code image.
-        // For now, we'll just return an empty byte array.
-        return new byte[0];
+        Visit visit = visitRepository.findById(visitId)
+                .orElseThrow(() -> new ResourceNotFoundException("Visit not found with id: " + visitId));
+        try {
+            QRCodeWriter qrCodeWriter = new QRCodeWriter();
+            BitMatrix bitMatrix = qrCodeWriter.encode(visit.getBadgeNumber(), BarcodeFormat.QR_CODE, 200, 200);
+            ByteArrayOutputStream pngOutputStream = new ByteArrayOutputStream();
+            MatrixToImageWriter.writeToStream(bitMatrix, "PNG", pngOutputStream);
+            return pngOutputStream.toByteArray();
+        } catch (Exception e) {
+            throw new RuntimeException("Could not generate QR code", e);
+        }
     }
 
     private Visit findVisit(Long visitId, String badgeNumber) {
